@@ -1,0 +1,36 @@
+package domain.usecase
+
+import com.google.common.truth.Truth.assertThat
+import domain.model.entity.Weather
+import domain.repository.WeatherRepository
+import io.mockk.coEvery
+import io.mockk.mockk
+import kotlinx.coroutines.test.runTest
+import org.example.domain.model.entity.Location
+import org.example.domain.model.entity.WeatherCondition
+import org.example.domain.usecase.GetWeatherUseCase
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import kotlin.test.assertEquals
+
+class GetWeatherUseCaseTest {
+    private lateinit var getWeatherUseCase: GetWeatherUseCase
+    private val weatherRepository:WeatherRepository = mockk()
+
+    @BeforeEach
+    fun setUp() {
+        getWeatherUseCase = GetWeatherUseCase(weatherRepository)
+    }
+
+    @Test
+    fun `getWeather should return weather data when repository returns data`()  = runTest {
+        val location = Location(latitude = 40.7128, longitude = -74.0060)
+        val expectedWeather = Weather(53.0, WeatherCondition.CLEAR_SKY)
+        coEvery { weatherRepository.getCurrentWeather(location) } returns expectedWeather
+
+        val result = getWeatherUseCase.getWeather(location)
+
+        assertThat(result).isEqualTo(expectedWeather)
+    }
+
+}
