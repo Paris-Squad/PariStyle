@@ -5,7 +5,7 @@ import org.example.domain.model.entity.TemperatureRange
 import org.example.domain.model.entity.WeatherCondition
 
 data class ClothingItem(
-    val type: ClothingType,
+    val clothingType: ClothingType,
     val description: String,
     val suitableTemperatureRange: TemperatureRange,
     val suitableConditions: Set<WeatherCondition>

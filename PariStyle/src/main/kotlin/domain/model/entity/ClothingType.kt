@@ -9,6 +9,7 @@ enum class ClothingType {
     HEAVY_JACKET,
     COAT,
     RAINCOAT,
+    UNKNOWN,
 
     SHORTS,
     JEANS,
