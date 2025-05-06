@@ -27,7 +27,7 @@ class GetClothingRecommendationUseCase(private val getWeatherUseCase: GetWeather
     }
 
     
-        private val clothingItemOptions =  listOf(
+    private val clothingItemOptions =  listOf(
             ClothingItem(
                 clothingType = ClothingType.T_SHIRT,
                 description = "Light short-sleeve shirt",
@@ -84,7 +84,7 @@ class GetClothingRecommendationUseCase(private val getWeatherUseCase: GetWeather
                 clothingItem.suitableTemperatureRange.min..clothingItem.suitableTemperatureRange.max
 
     companion object{
-        val emptyClothingItem = ClothingItem(
+       private val emptyClothingItem = ClothingItem(
             clothingType = ClothingType.UNKNOWN,
             description = "no description",
             suitableTemperatureRange = TemperatureRange(-70.0,70.0),
