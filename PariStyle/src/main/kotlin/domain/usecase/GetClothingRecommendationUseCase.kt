@@ -1,9 +1,91 @@
 package org.example.domain.usecase
 
 import domain.model.entity.ClothingItem
+import org.example.domain.model.entity.ClothingType
+import org.example.domain.model.entity.TemperatureRange
+import org.example.domain.model.entity.WeatherCondition
+import org.example.domain.model.exception.PariStyleException
 
 class GetClothingRecommendationUseCase(private val getWeatherUseCase: GetWeatherUseCase) {
-    suspend fun getClothingRecommendation(): ClothingItem {
-        TODO("Not yet implemented")
+    suspend fun getClothingRecommendationForCurrentWeather(): ClothingItem {
+        val weatherCondition  = getWeatherUseCase.getWeather().weatherCondition
+        val weatherTemperature = getWeatherUseCase.getWeather().temperature
+        return getClothesItem(weatherCondition, weatherTemperature)
+    }
+
+
+    private fun getClothesItem(weatherCondition: WeatherCondition, temperature : Double): ClothingItem{
+        return pickSuitableClothes(weatherCondition,temperature)
+    }
+
+    private fun pickSuitableClothes(weatherCondition: WeatherCondition, temperature : Double): ClothingItem{
+       val suitableClothes =  getListOfClothesItemsWithDifferentConditions().filter { clothingItem ->
+            clothingItem.suitableConditions.contains(weatherCondition) &&
+                    checkTemperatureRange(temperature,clothingItem)
+        }
+        return suitableClothes.firstOrNull() ?: throw PariStyleException.SuitableClothesException(
+            "No Suitable Clothes available"
+        )
+    }
+
+    private fun getListOfClothesItemsWithDifferentConditions(): List<ClothingItem>{
+        return listOf(
+            ClothingItem(
+                clothingType = ClothingType.T_SHIRT,
+                description = "Light short-sleeve shirt",
+                suitableTemperatureRange = TemperatureRange(20.0, 40.0),
+                suitableConditions = setOf(
+                    WeatherCondition.CLEAR_SKY,
+                    WeatherCondition.MAINLY_CLEAR,
+                    WeatherCondition.PARTLY_CLOUDY
+                )
+            ),
+            ClothingItem(
+                clothingType = ClothingType.SHIRT,
+                description = "Regular long-sleeve shirt",
+                suitableTemperatureRange = TemperatureRange(15.0, 25.0),
+                suitableConditions = setOf(
+                    WeatherCondition.CLEAR_SKY,
+                    WeatherCondition.MAINLY_CLEAR,
+                    WeatherCondition.PARTLY_CLOUDY,
+                    WeatherCondition.OVERCAST
+                )
+            ),
+            ClothingItem(
+                clothingType = ClothingType.RAINCOAT,
+                description = "Waterproof raincoat",
+                suitableTemperatureRange = TemperatureRange(-10.0, 25.0),
+                suitableConditions = setOf(
+                    WeatherCondition.DRIZZLE,
+                    WeatherCondition.LIGHT_FREEZING_DRIZZLE,
+                    WeatherCondition.SLIGHT_RAIN,
+                    WeatherCondition.MODERATE_RAIN,
+                    WeatherCondition.HEAVY_INTENSITY_RAIN,
+                    WeatherCondition.LIGHT_FREEZING_RAIN,
+                    WeatherCondition.HEAVY_INTENSITY_FREEZING_RAIN,
+                    WeatherCondition.SLIGHT_RAIN_SHOWERS,
+                    WeatherCondition.MODERATE_RAIN_SHOWERS,
+                    WeatherCondition.VIOLENT_RAIN_SHOWERS
+                )
+            ),
+            ClothingItem(
+                clothingType = ClothingType.UMBRELLA,
+                description = "Foldable umbrella",
+                suitableTemperatureRange = TemperatureRange(-5.0, 30.0),
+                suitableConditions = setOf(
+                    WeatherCondition.DRIZZLE,
+                    WeatherCondition.SLIGHT_RAIN,
+                    WeatherCondition.MODERATE_RAIN,
+                    WeatherCondition.SLIGHT_RAIN_SHOWERS,
+                    WeatherCondition.MODERATE_RAIN_SHOWERS
+                )
+            )
+        )
+
+    }
+
+    private fun checkTemperatureRange(temperature : Double, clothingItem: ClothingItem): Boolean{
+        return temperature in
+                clothingItem.suitableTemperatureRange.min..clothingItem.suitableTemperatureRange.max
     }
 }
