@@ -1,6 +1,7 @@
 package org.example.presentation.view
 
 import domain.model.entity.ClothingItem
+import org.example.domain.model.exception.PariStyleException
 import org.example.presentation.presenter.WeatherRecommendationPresenter
 
 class WeatherRecommendationCLI(
@@ -38,14 +39,16 @@ class WeatherRecommendationCLI(
     private suspend fun handleSpecificLocation() {
         try {
             print("Enter latitude: ")
-            val lat = readlnOrNull()?.toDoubleOrNull() ?: throw IllegalArgumentException("Invalid latitude")
+            val lat = readlnOrNull()?.toDoubleOrNull() ?:
+            throw PariStyleException.InvalidInputException("Invalid latitude")
             print("Enter longitude: ")
-            val lon = readlnOrNull()?.toDoubleOrNull() ?: throw IllegalArgumentException("Invalid longitude")
+            val lon = readlnOrNull()?.toDoubleOrNull() ?:
+            throw PariStyleException.InvalidInputException("Invalid longitude")
 
             val recommendation = presenter.getSpecificLocationRecommendation(lat, lon)
             showRecommendation(recommendation)
-        } catch (e: Exception) {
-            println("Error: ${e.message}")
+        } catch (throwable: Throwable) {
+           throw PariStyleException.NotFoundException("can not get the recommendation: ${throwable.message}")
         }
     }
 
@@ -53,8 +56,8 @@ class WeatherRecommendationCLI(
         try {
             val recommendation = presenter.getCurrentLocationRecommendation()
             showRecommendation(recommendation)
-        } catch (e: Exception) {
-            println("Error: ${e.message}")
+        } catch (throwable: Throwable) {
+            throw PariStyleException.NotFoundException("can not get the recommendation: ${throwable.message}")
         }
     }
 
