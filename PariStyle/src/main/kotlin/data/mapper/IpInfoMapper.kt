@@ -4,4 +4,4 @@ import org.example.data.model.IpInfoDTO
 import org.example.domain.model.entity.Location
 
 fun IpInfoDTO.toLocation() =
-    Location(latitude = this.lat, longitude = this.lon)
+    Location(latitude = this.latitude?:0.0, longitude = this.longitude?:0.0)
