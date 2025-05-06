@@ -2,6 +2,7 @@ package org.example.domain.usecase
 
 import domain.model.entity.ClothingItem
 import org.example.domain.model.entity.ClothingType
+import org.example.domain.model.entity.Location
 import org.example.domain.model.entity.TemperatureRange
 import org.example.domain.model.entity.WeatherCondition
 
@@ -9,12 +10,13 @@ class GetClothingRecommendationUseCase(private val getWeatherUseCase: GetWeather
     suspend fun getClothingRecommendationForCurrentWeather(): ClothingItem {
         val weatherCondition  = getWeatherUseCase.getWeather().weatherCondition
         val weatherTemperature = getWeatherUseCase.getWeather().temperature
-        return getClothesItem(weatherCondition, weatherTemperature)
+        return pickSuitableClothes(weatherCondition, weatherTemperature)
     }
 
-
-    private fun getClothesItem(weatherCondition: WeatherCondition, temperature : Double): ClothingItem{
-        return pickSuitableClothes(weatherCondition,temperature)
+    suspend fun getClothingRecommendationForCurrentWeatherInSpecificLocation(location: Location): ClothingItem{
+        val weatherCondition = getWeatherUseCase.getLocationWeather(location).weatherCondition
+        val weatherTemperature = getWeatherUseCase.getLocationWeather(location).temperature
+        return pickSuitableClothes(weatherCondition,weatherTemperature)
     }
 
     private fun pickSuitableClothes(weatherCondition: WeatherCondition, temperature : Double): ClothingItem{
@@ -26,8 +28,11 @@ class GetClothingRecommendationUseCase(private val getWeatherUseCase: GetWeather
 
     }
 
-    
-    private val clothingItemOptions =  listOf(
+    private fun isWithinTemperatureRange(temperature : Double, clothingItem: ClothingItem) = temperature in
+                clothingItem.suitableTemperatureRange.min..clothingItem.suitableTemperatureRange.max
+
+    companion object{
+        private val clothingItemOptions =  listOf(
             ClothingItem(
                 clothingType = ClothingType.T_SHIRT,
                 description = "Light short-sleeve shirt",
@@ -80,10 +85,6 @@ class GetClothingRecommendationUseCase(private val getWeatherUseCase: GetWeather
             )
         )
 
-    private fun isWithinTemperatureRange(temperature : Double, clothingItem: ClothingItem) = temperature in
-                clothingItem.suitableTemperatureRange.min..clothingItem.suitableTemperatureRange.max
-
-    companion object{
        private val emptyClothingItem = ClothingItem(
             clothingType = ClothingType.UNKNOWN,
             description = "no description",
