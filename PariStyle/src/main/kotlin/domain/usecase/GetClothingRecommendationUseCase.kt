@@ -4,7 +4,6 @@ import domain.model.entity.ClothingItem
 import org.example.domain.model.entity.ClothingType
 import org.example.domain.model.entity.TemperatureRange
 import org.example.domain.model.entity.WeatherCondition
-import org.example.domain.model.exception.PariStyleException
 
 class GetClothingRecommendationUseCase(private val getWeatherUseCase: GetWeatherUseCase) {
     suspend fun getClothingRecommendationForCurrentWeather(): ClothingItem {
@@ -19,17 +18,16 @@ class GetClothingRecommendationUseCase(private val getWeatherUseCase: GetWeather
     }
 
     private fun pickSuitableClothes(weatherCondition: WeatherCondition, temperature : Double): ClothingItem{
-       val suitableClothes =  getListOfClothesItemsWithDifferentConditions().filter { clothingItem ->
+       val suitableClothes =  clothingItemOptions.filter { clothingItem ->
             clothingItem.suitableConditions.contains(weatherCondition) &&
-                    checkTemperatureRange(temperature,clothingItem)
+                    isWithinTemperatureRange(temperature,clothingItem)
         }
-        return suitableClothes.firstOrNull() ?: throw PariStyleException.SuitableClothesException(
-            "No Suitable Clothes available"
-        )
+        return suitableClothes.firstOrNull() ?: emptyClothingItem
+
     }
 
-    private fun getListOfClothesItemsWithDifferentConditions(): List<ClothingItem>{
-        return listOf(
+    
+        private val clothingItemOptions =  listOf(
             ClothingItem(
                 clothingType = ClothingType.T_SHIRT,
                 description = "Light short-sleeve shirt",
@@ -82,10 +80,15 @@ class GetClothingRecommendationUseCase(private val getWeatherUseCase: GetWeather
             )
         )
 
-    }
-
-    private fun checkTemperatureRange(temperature : Double, clothingItem: ClothingItem): Boolean{
-        return temperature in
+    private fun isWithinTemperatureRange(temperature : Double, clothingItem: ClothingItem) = temperature in
                 clothingItem.suitableTemperatureRange.min..clothingItem.suitableTemperatureRange.max
+
+    companion object{
+        val emptyClothingItem = ClothingItem(
+            clothingType = ClothingType.UNKNOWN,
+            description = "no description",
+            suitableTemperatureRange = TemperatureRange(-70.0,70.0),
+            suitableConditions = setOf(WeatherCondition.UNKNOWN)
+        )
     }
 }
