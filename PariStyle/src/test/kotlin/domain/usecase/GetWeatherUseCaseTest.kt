@@ -11,7 +11,6 @@ import org.example.domain.model.entity.WeatherCondition
 import org.example.domain.usecase.GetWeatherUseCase
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import kotlin.test.assertEquals
 
 class GetWeatherUseCaseTest {
     private lateinit var getWeatherUseCase: GetWeatherUseCase
@@ -25,10 +24,10 @@ class GetWeatherUseCaseTest {
     @Test
     fun `getWeather should return weather data when repository returns data`()  = runTest {
         val location = Location(latitude = 40.7128, longitude = -74.0060)
-        val expectedWeather = Weather(53.0, WeatherCondition.CLEAR_SKY)
-        coEvery { weatherRepository.getCurrentWeather(location) } returns expectedWeather
+        val expectedWeather = Weather(53.0, "c",WeatherCondition.CLEAR_SKY)
+        coEvery { weatherRepository.getLocationCurrentWeather(location) } returns expectedWeather
 
-        val result = getWeatherUseCase.getWeather(location)
+        val result = getWeatherUseCase.getLocationWeather(location)
 
         assertThat(result).isEqualTo(expectedWeather)
     }
