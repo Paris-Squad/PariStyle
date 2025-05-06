@@ -22,11 +22,14 @@ dependencies {
     testImplementation("io.mockk:mockk:1.13.16")
     testImplementation("com.google.truth:truth:1.4.2")
     testImplementation("io.insert-koin:koin-test:4.0.3")
+    testImplementation("io.ktor:ktor-client-mock:3.1.2")
+    testImplementation("io.ktor:ktor-client-content-negotiation:3.1.2")
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
 
     implementation("io.ktor:ktor-client-core:3.1.2")
+    implementation("io.ktor:ktor-client-mock:3.1.2")
     implementation("io.ktor:ktor-client-cio:3.1.2")
     implementation("io.ktor:ktor-client-content-negotiation:3.1.2")
     implementation("io.ktor:ktor-serialization-kotlinx-json:3.1.2")
