@@ -5,13 +5,14 @@ import domain.model.entity.Weather
 import org.example.domain.model.entity.WeatherCondition
 
 fun WeatherDTO.toWeather(): Weather {
-    val currentWeather = this.currentWeather ?: return Weather(0.0, WeatherCondition.UNKNOWN)
+    val currentWeather = this.currentWeather ?: return Weather(0.0,"", WeatherCondition.UNKNOWN )
     val temperature = currentWeather.temperature ?: 0.0
     val weatherCode = currentWeather.weatherCode ?: -1
-
+    val temperatureUnit = this.currentWeatherUnits?.temperature ?: ""
     return Weather(
         temperature = temperature,
-        weatherCondition = mapWeatherCodeToCondition(weatherCode)
+        weatherCondition = mapWeatherCodeToCondition(weatherCode),
+        unit = temperatureUnit
     )
 }
 
