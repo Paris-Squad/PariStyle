@@ -2,6 +2,7 @@ import java.util.regex.Pattern
 
 plugins {
     kotlin("jvm") version "2.1.20"
+    kotlin("plugin.serialization") version "2.1.20"
     id("jacoco")
 }
 
@@ -29,6 +30,7 @@ dependencies {
     implementation("io.ktor:ktor-client-cio:3.1.2")
     implementation("io.ktor:ktor-client-content-negotiation:3.1.2")
     implementation("io.ktor:ktor-serialization-kotlinx-json:3.1.2")
+    implementation("io.ktor:ktor-client-logging:3.1.2")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
 
     implementation("ch.qos.logback:logback-classic:1.5.13")
