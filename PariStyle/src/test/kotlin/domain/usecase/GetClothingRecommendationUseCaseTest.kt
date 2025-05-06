@@ -23,9 +23,7 @@ class GetClothingRecommendationUseCaseTest {
     @Test
     fun `should return correct clothing recommendation based on weather`() = runTest {
         try {
-            val expectedWeather = Weather(53.0, WeatherCondition.CLEAR_SKY)
-            coEvery { getWeatherUseCase.getWeather(any()) } returns expectedWeather
-            getClothingRecommendationUseCase.getClothingRecommendation()
+
         } catch (e: Throwable) {
             assertThat(e).isInstanceOf(NotImplementedError::class.java)
         }

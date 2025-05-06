@@ -12,7 +12,7 @@ fun WeatherDTO.toWeather(): Weather {
     return Weather(
         temperature = temperature,
         weatherCondition = mapWeatherCodeToCondition(weatherCode),
-        unit = temperatureUnit
+        temperatureUnit = temperatureUnit
     )
 }
 

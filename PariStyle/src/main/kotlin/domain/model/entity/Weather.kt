@@ -4,7 +4,7 @@ import org.example.domain.model.entity.WeatherCondition
 
 data class Weather(
     val temperature: Double,
-    val unit: String,
+    val temperatureUnit: String,
     val weatherCondition: WeatherCondition,
 )
 
