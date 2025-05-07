@@ -9,11 +9,13 @@ import kotlinx.coroutines.test.runTest
 import org.example.domain.model.entity.ClothingType
 import org.example.domain.model.entity.Location
 import org.example.domain.model.entity.WeatherCondition
+import org.example.domain.model.exception.PariStyleException
 import org.example.domain.usecase.GetClothingRecommendationUseCase
 import org.example.domain.usecase.GetWeatherUseCase
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import kotlin.test.assertEquals
+import org.junit.jupiter.api.assertThrows
+
 
 class GetClothingRecommendationUseCaseTest {
     private val getWeatherUseCase: GetWeatherUseCase = mockk()
@@ -119,5 +121,24 @@ class GetClothingRecommendationUseCaseTest {
         val result = getClothingRecommendationUseCase.getClothingRecommendationForCurrentWeather()
 
         assertThat(result.clothingType).isEqualTo(ClothingType.SHIRT)
+    }
+    @Test
+    fun `should throw exception when getWeather fails`() = runTest {
+        coEvery { getWeatherUseCase.getWeather() } throws PariStyleException.NetWorkException("Network error")
+
+        assertThrows<PariStyleException> {
+            getClothingRecommendationUseCase.getClothingRecommendationForCurrentWeather()
+        }
+    }
+
+    @Test
+    fun `should throw exception when getLocationWeather fails`() = runTest {
+        val location = Location(1.0, 2.0)
+        coEvery { getWeatherUseCase.getLocationWeather(location)
+        } throws PariStyleException.NetWorkException("Location Error")
+
+        assertThrows<PariStyleException> {
+            getClothingRecommendationUseCase.getClothingRecommendationForCurrentWeatherInSpecificLocation(location)
+        }
     }
 }
