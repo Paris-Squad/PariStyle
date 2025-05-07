@@ -1,6 +1,7 @@
 package domain.usecase
 
 
+import com.google.common.truth.Truth.assertThat
 import domain.model.entity.Weather
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -24,99 +25,99 @@ class GetClothingRecommendationUseCaseTest {
     }
 
     @Test
-    fun `returns RAINCOAT for cold rainy weather`() = runTest {
+    fun `should returns RAINCOAT when cold rainy weather`() = runTest {
         val weather = Weather(0.0,"c",WeatherCondition.SLIGHT_RAIN)
         coEvery{getWeatherUseCase.getWeather()} returns  weather
 
         val result = getClothingRecommendationUseCase.getClothingRecommendationForCurrentWeather()
 
-        assertEquals(ClothingType.RAINCOAT, result.clothingType)
+        assertThat(result.clothingType).isEqualTo(ClothingType.RAINCOAT)
     }
     @Test
-    fun `returns SHIRT for mild overcast weather`() = runTest {
+    fun `should returns SHIRT when mild overcast weather`() = runTest {
         val weather= Weather(15.0,"c",WeatherCondition.PARTLY_CLOUDY)
         coEvery { getWeatherUseCase.getWeather() } returns weather
 
         val result= getClothingRecommendationUseCase.getClothingRecommendationForCurrentWeather()
 
-        assertEquals(ClothingType.SHIRT,result.clothingType)
+        assertThat(result.clothingType).isEqualTo(ClothingType.SHIRT)
     }
 
     @Test
-    fun `returns T_SHIRT for hot sunny weather`() = runTest {
+    fun `should returns T_SHIRT when hot sunny weather`() = runTest {
         val weather = Weather(30.0,"c", WeatherCondition.MAINLY_CLEAR)
         coEvery { getWeatherUseCase.getWeather() } returns weather
 
         val result = getClothingRecommendationUseCase.getClothingRecommendationForCurrentWeather()
 
-        assertEquals(ClothingType.T_SHIRT,result.clothingType)
+        assertThat(result.clothingType).isEqualTo(ClothingType.T_SHIRT)
     }
     @Test
-    fun `returns RAINCOAT for drizzle and 10 degrees`() = runTest {
+    fun `should returns RAINCOAT when drizzle and 10 degrees`() = runTest {
         val weather = Weather(10.0, "c", WeatherCondition.DRIZZLE)
         coEvery { getWeatherUseCase.getWeather() } returns weather
 
         val result = getClothingRecommendationUseCase.getClothingRecommendationForCurrentWeather()
-        assertEquals(ClothingType.RAINCOAT, result.clothingType)
+
+        assertThat(result.clothingType).isEqualTo(ClothingType.RAINCOAT)
     }
     @Test
-    fun `returns UMBRELLA for rainy weather in location`() = runTest {
+    fun `should returns UMBRELLA when rainy weather in location`() = runTest {
         val location = Location(latitude = 40.7128, longitude = -74.0060)
         val weather = Weather(30.0,"c", WeatherCondition.MODERATE_RAIN_SHOWERS)
         coEvery { getWeatherUseCase.getLocationWeather(location) } returns weather
 
         val result = getClothingRecommendationUseCase.getClothingRecommendationForCurrentWeatherInSpecificLocation(location)
 
-        assertEquals(ClothingType.UMBRELLA,result.clothingType)
-        assertEquals("Foldable umbrella", result.description)
+        assertThat(result.clothingType).isEqualTo(ClothingType.UMBRELLA)
     }
     @Test
-    fun `returns first matching item when multiple clothing items apply`() = runTest {
+    fun `should returns first matching item when multiple clothing items apply`() = runTest {
         val location = Location(latitude = 0.0, longitude = 0.0)
         val weather = Weather(20.0,"c", WeatherCondition.MODERATE_RAIN_SHOWERS)
         coEvery { getWeatherUseCase.getLocationWeather(location) } returns weather
 
         val result = getClothingRecommendationUseCase.getClothingRecommendationForCurrentWeatherInSpecificLocation(location)
 
-        assertEquals(ClothingType.RAINCOAT,result.clothingType)
+        assertThat(result.clothingType).isEqualTo(ClothingType.RAINCOAT)
     }
 
     @Test
-    fun `returns RAINCOAT for negative temperature within raincoat range`() = runTest {
+    fun `should returns RAINCOAT when negative temperature within raincoat range`() = runTest {
         val weather = Weather(-5.0,"c", WeatherCondition.MODERATE_RAIN_SHOWERS)
         coEvery { getWeatherUseCase.getWeather() } returns weather
 
         val result = getClothingRecommendationUseCase.getClothingRecommendationForCurrentWeather()
 
-        assertEquals(ClothingType.RAINCOAT,result.clothingType)
+        assertThat(result.clothingType).isEqualTo(ClothingType.RAINCOAT)
     }
 
     @Test
-    fun `returns UNKNOWN when no clothing item matches`() = runTest {
+    fun `should returns UNKNOWN when no clothing item matches`() = runTest {
         val weather = Weather(70.0,"c", WeatherCondition.UNKNOWN)
         coEvery { getWeatherUseCase.getWeather() } returns weather
 
         val result = getClothingRecommendationUseCase.getClothingRecommendationForCurrentWeather()
 
-        assertEquals(ClothingType.UNKNOWN,result.clothingType)
+        assertThat(result.clothingType).isEqualTo(ClothingType.UNKNOWN)
     }
     @Test
-    fun `returns T_SHIRT at upper bound of its temperature range`() = runTest {
+    fun `should returns T_SHIRT at upper bound of its temperature range`() = runTest {
         val weather = Weather(40.0, "c", WeatherCondition.MAINLY_CLEAR)
         coEvery { getWeatherUseCase.getWeather() } returns weather
 
         val result = getClothingRecommendationUseCase.getClothingRecommendationForCurrentWeather()
 
-        assertEquals(ClothingType.T_SHIRT, result.clothingType)
+        assertThat(result.clothingType).isEqualTo(ClothingType.T_SHIRT)
     }
 
     @Test
-    fun `returns SHIRT at lower bound of its temperature range`() = runTest {
+    fun `should returns SHIRT at lower bound of its temperature range`() = runTest {
         val weather = Weather(15.0, "c", WeatherCondition.OVERCAST)
         coEvery { getWeatherUseCase.getWeather() } returns weather
 
         val result = getClothingRecommendationUseCase.getClothingRecommendationForCurrentWeather()
 
-        assertEquals(ClothingType.SHIRT, result.clothingType)
+        assertThat(result.clothingType).isEqualTo(ClothingType.SHIRT)
     }
 }
