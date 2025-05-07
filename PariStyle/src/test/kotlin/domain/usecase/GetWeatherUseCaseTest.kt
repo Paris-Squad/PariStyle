@@ -22,7 +22,7 @@ class GetWeatherUseCaseTest {
     }
 
     @Test
-    fun `getWeather should return weather data when repository returns data`()  = runTest {
+    fun `getLocationWeather should return weather data when repository returns data`()  = runTest {
         val location = Location(latitude = 40.7128, longitude = -74.0060)
         val expectedWeather = Weather(53.0, "c",WeatherCondition.CLEAR_SKY)
         coEvery { weatherRepository.getLocationCurrentWeather(location) } returns expectedWeather
@@ -32,4 +32,13 @@ class GetWeatherUseCaseTest {
         assertThat(result).isEqualTo(expectedWeather)
     }
 
+    @Test
+    fun `getWeather should return weather data when repository returns data`()  = runTest {
+        val expectedWeather = Weather(53.0, "c",WeatherCondition.CLEAR_SKY)
+        coEvery { weatherRepository.getCurrentWeather() } returns expectedWeather
+
+        val result = getWeatherUseCase.getWeather()
+
+        assertThat(result).isEqualTo(expectedWeather)
+    }
 }
