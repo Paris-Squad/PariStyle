@@ -32,7 +32,7 @@ class WeatherRecommendationCLI(
             when (state) {
                 is WeatherRecommendationState.Error -> printer.displayErr(state.exception)
                 is WeatherRecommendationState.Loading -> printer.displayMsg("Loading...")
-                is WeatherRecommendationState.Success -> printer.displayLn(state.recommendation)
+                is WeatherRecommendationState.Success -> printer.displayLn(state.recommendation.formatRecommendation())
                 else -> {}
             }
         }

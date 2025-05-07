@@ -1,4 +1,4 @@
-package org.example.domain.model.entity
+package org.example.domain.model.entity.weather
 
 enum class WeatherCondition(val displayName: String) {
     CLEAR_SKY("Clear sky"),

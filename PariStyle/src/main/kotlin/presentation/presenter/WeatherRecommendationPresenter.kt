@@ -1,12 +1,12 @@
 package org.example.presentation.presenter
 
-import domain.model.entity.ClothingItem
-import org.example.domain.model.entity.Location
+import org.example.domain.model.entity.cloth.ClothingRecommendation
+import org.example.domain.model.entity.weather.Location
 import org.example.domain.usecase.GetClothingRecommendationUseCase
 
 class WeatherRecommendationPresenter(
     private val getClothingRecommendationUseCase: GetClothingRecommendationUseCase
-) : BasePresenter<ClothingItem, WeatherRecommendationState>(WeatherRecommendationState.Initial) {
+) : BasePresenter<ClothingRecommendation, WeatherRecommendationState>(WeatherRecommendationState.Initial) {
 
     suspend fun getCurrentLocationRecommendation() {
         emitLoading()

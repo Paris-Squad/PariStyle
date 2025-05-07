@@ -1,8 +1,8 @@
 package org.example.data.mapper
 
 import data.model.WeatherDTO
-import domain.model.entity.Weather
-import org.example.domain.model.entity.WeatherCondition
+import domain.model.entity.weather.Weather
+import org.example.domain.model.entity.weather.WeatherCondition
 
 fun WeatherDTO.toWeather(): Weather {
     val currentWeather = this.currentWeather ?: return Weather(0.0,"", WeatherCondition.UNKNOWN )
