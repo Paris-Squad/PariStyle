@@ -22,16 +22,26 @@ val appModule = module {
                 })
             }
             install(Logging) {
-                level = LogLevel.ALL
+                level = LogLevel.BODY
                 logger = ColoredLogger
             }
         }
     }
+
+    // IO
+    single { org.example.presentation.io.ConsolePrinter() as org.example.presentation.io.Printer }
+    single { org.example.presentation.io.ConsoleReader() as org.example.presentation.io.InputReader }
 
     // Repositories
     single<WeatherRepository> { WeatherRepositoryImpl(get()) }
 
     // Use Cases
     single { GetWeatherUseCase(get()) }
-    single { GetWeatherUseCase(get()) }
+    single { org.example.domain.usecase.GetClothingRecommendationUseCase(get()) }
+
+    // Presenters
+    single { org.example.presentation.presenter.WeatherRecommendationPresenter(get()) }
+
+    // Views
+    single { org.example.presentation.view.WeatherRecommendationCLI(get(), get(), get()) }
 }

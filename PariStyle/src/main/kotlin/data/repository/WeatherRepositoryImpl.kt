@@ -42,7 +42,6 @@ class WeatherRepositoryImpl(private val httpClient: HttpClient) : WeatherReposit
             val url = "$IPI_API_URL$ipResponse?fields=status,country,regionName,city,lat,lon,timezone"
             val response = httpClient.get(url)
             val ipInfoDTO = response.body<IpInfoDTO>()
-            println(ipInfoDTO)
             ipInfoDTO.toLocation()
         }
     }

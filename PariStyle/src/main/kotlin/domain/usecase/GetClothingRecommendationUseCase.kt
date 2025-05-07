@@ -7,6 +7,7 @@ import org.example.domain.model.entity.TemperatureRange
 import org.example.domain.model.entity.WeatherCondition
 
 class GetClothingRecommendationUseCase(private val getWeatherUseCase: GetWeatherUseCase) {
+
     suspend fun getClothingRecommendationForCurrentWeather(): ClothingItem {
         val weatherCondition  = getWeatherUseCase.getWeather().weatherCondition
         val weatherTemperature = getWeatherUseCase.getWeather().temperature
