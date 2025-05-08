@@ -1,7 +1,7 @@
 package org.example.data.repository
 
 import data.model.WeatherDTO
-import domain.model.entity.Weather
+import domain.model.entity.weather.Weather
 import domain.repository.WeatherRepository
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -10,7 +10,7 @@ import io.ktor.client.request.*
 import org.example.data.mapper.toLocation
 import org.example.data.mapper.toWeather
 import org.example.data.model.IpInfoDTO
-import org.example.domain.model.entity.Location
+import org.example.domain.model.entity.weather.Location
 import org.example.domain.model.exception.PariStyleException
 
 class WeatherRepositoryImpl(private val httpClient: HttpClient) : WeatherRepository {
@@ -42,7 +42,6 @@ class WeatherRepositoryImpl(private val httpClient: HttpClient) : WeatherReposit
             val url = "$IPI_API_URL$ipResponse?fields=status,country,regionName,city,lat,lon,timezone"
             val response = httpClient.get(url)
             val ipInfoDTO = response.body<IpInfoDTO>()
-            println(ipInfoDTO)
             ipInfoDTO.toLocation()
         }
     }

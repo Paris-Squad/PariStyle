@@ -61,6 +61,8 @@ tasks.named<JacocoReport>("jacocoTestReport") {
                 exclude("domain/exception/**")
                 exclude("di/**")
                 exclude("org/example/MainKt.class")
+                exclude("org/example/data/repository/WeatherRepositoryImplKt.class")
+                exclude("org/example/data/utils/**")
             }
         })
     )

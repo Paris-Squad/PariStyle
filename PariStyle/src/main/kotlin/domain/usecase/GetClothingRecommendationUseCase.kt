@@ -1,95 +1,57 @@
 package org.example.domain.usecase
 
-import domain.model.entity.ClothingItem
-import org.example.domain.model.entity.ClothingType
-import org.example.domain.model.entity.Location
-import org.example.domain.model.entity.TemperatureRange
-import org.example.domain.model.entity.WeatherCondition
+import org.example.domain.model.entity.cloth.ClothingRecommendation
+import org.example.domain.model.entity.cloth.enums.ClothingCategory
+import org.example.domain.model.entity.weather.Location
+import org.example.domain.model.entity.weather.WeatherCondition
+import org.example.domain.model.exception.PariStyleException
+import org.example.domain.repository.ClothingRepository
 
-class GetClothingRecommendationUseCase(private val getWeatherUseCase: GetWeatherUseCase) {
-    suspend fun getClothingRecommendationForCurrentWeather(): ClothingItem {
-        val weatherCondition  = getWeatherUseCase.getWeather().weatherCondition
-        val weatherTemperature = getWeatherUseCase.getWeather().temperature
-        return pickSuitableClothes(weatherCondition, weatherTemperature)
+class GetClothingRecommendationUseCase(
+    private val getWeatherUseCase: GetWeatherUseCase,
+    private val clothingRepository: ClothingRepository
+) {
+
+    suspend fun getClothingRecommendationForCurrentWeather(): ClothingRecommendation {
+        val weather = getWeatherUseCase.getWeather()
+        return getClothingRecommendation(weather.weatherCondition, weather.temperature)
     }
 
-    suspend fun getClothingRecommendationForCurrentWeatherInSpecificLocation(location: Location): ClothingItem{
-        val weatherCondition = getWeatherUseCase.getLocationWeather(location).weatherCondition
-        val weatherTemperature = getWeatherUseCase.getLocationWeather(location).temperature
-        return pickSuitableClothes(weatherCondition,weatherTemperature)
+    suspend fun getClothingRecommendationForCurrentWeatherInSpecificLocation(location: Location): ClothingRecommendation {
+        val weather = getWeatherUseCase.getLocationWeather(location)
+        return getClothingRecommendation(weather.weatherCondition, weather.temperature)
     }
 
-    private fun pickSuitableClothes(weatherCondition: WeatherCondition, temperature : Double): ClothingItem{
-       val suitableClothes =  clothingItemOptions.filter { clothingItem ->
-            clothingItem.suitableConditions.contains(weatherCondition) &&
-                    isWithinTemperatureRange(temperature,clothingItem)
-        }
-        return suitableClothes.firstOrNull() ?: emptyClothingItem
-
-    }
-
-    private fun isWithinTemperatureRange(temperature : Double, clothingItem: ClothingItem) = temperature in
-                clothingItem.suitableTemperatureRange.min..clothingItem.suitableTemperatureRange.max
-
-    companion object{
-        private val clothingItemOptions =  listOf(
-            ClothingItem(
-                clothingType = ClothingType.T_SHIRT,
-                description = "Light short-sleeve shirt",
-                suitableTemperatureRange = TemperatureRange(20.0, 40.0),
-                suitableConditions = setOf(
-                    WeatherCondition.CLEAR_SKY,
-                    WeatherCondition.MAINLY_CLEAR,
-                    WeatherCondition.PARTLY_CLOUDY
-                )
-            ),
-            ClothingItem(
-                clothingType = ClothingType.SHIRT,
-                description = "Regular long-sleeve shirt",
-                suitableTemperatureRange = TemperatureRange(15.0, 25.0),
-                suitableConditions = setOf(
-                    WeatherCondition.CLEAR_SKY,
-                    WeatherCondition.MAINLY_CLEAR,
-                    WeatherCondition.PARTLY_CLOUDY,
-                    WeatherCondition.OVERCAST
-                )
-            ),
-            ClothingItem(
-                clothingType = ClothingType.RAINCOAT,
-                description = "Waterproof raincoat",
-                suitableTemperatureRange = TemperatureRange(-10.0, 25.0),
-                suitableConditions = setOf(
-                    WeatherCondition.DRIZZLE,
-                    WeatherCondition.LIGHT_FREEZING_DRIZZLE,
-                    WeatherCondition.SLIGHT_RAIN,
-                    WeatherCondition.MODERATE_RAIN,
-                    WeatherCondition.HEAVY_INTENSITY_RAIN,
-                    WeatherCondition.LIGHT_FREEZING_RAIN,
-                    WeatherCondition.HEAVY_INTENSITY_FREEZING_RAIN,
-                    WeatherCondition.SLIGHT_RAIN_SHOWERS,
-                    WeatherCondition.MODERATE_RAIN_SHOWERS,
-                    WeatherCondition.VIOLENT_RAIN_SHOWERS
-                )
-            ),
-            ClothingItem(
-                clothingType = ClothingType.UMBRELLA,
-                description = "Foldable umbrella",
-                suitableTemperatureRange = TemperatureRange(-5.0, 30.0),
-                suitableConditions = setOf(
-                    WeatherCondition.DRIZZLE,
-                    WeatherCondition.SLIGHT_RAIN,
-                    WeatherCondition.MODERATE_RAIN,
-                    WeatherCondition.SLIGHT_RAIN_SHOWERS,
-                    WeatherCondition.MODERATE_RAIN_SHOWERS
-                )
-            )
+    private fun getClothingRecommendation(
+        weatherCondition: WeatherCondition,
+        temperature: Double
+    ): ClothingRecommendation {
+        val topItems = clothingRepository.getClothingItemsByCategoryAndConditions(
+            ClothingCategory.UPPER_BODY,
+            setOf(weatherCondition),
+            temperature
         )
 
-       private val emptyClothingItem = ClothingItem(
-            clothingType = ClothingType.UNKNOWN,
-            description = "no description",
-            suitableTemperatureRange = TemperatureRange(-70.0,70.0),
-            suitableConditions = setOf(WeatherCondition.UNKNOWN)
+        val bottomItems = clothingRepository.getClothingItemsByCategoryAndConditions(
+            ClothingCategory.LOWER_BODY,
+            setOf(weatherCondition),
+            temperature
+        )
+
+        val accessoryItems = clothingRepository.getClothingItemsByCategoryAndConditions(
+            ClothingCategory.ACCESSORY,
+            setOf(weatherCondition),
+            temperature
+        )
+
+        val topItem = topItems.randomOrNull() ?: throw PariStyleException.NotFoundException("No top items found")
+        val bottomItem = bottomItems.randomOrNull() ?: throw PariStyleException.NotFoundException("No bottom items found")
+        val accessoryItem = if (accessoryItems.isNotEmpty()) accessoryItems.random() else null
+
+        return ClothingRecommendation(
+            topItem = topItem,
+            bottomItem = bottomItem,
+            accessoryItem = accessoryItem
         )
     }
 }

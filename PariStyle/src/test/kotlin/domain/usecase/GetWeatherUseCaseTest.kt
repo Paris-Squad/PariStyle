@@ -1,13 +1,13 @@
 package domain.usecase
 
 import com.google.common.truth.Truth.assertThat
-import domain.model.entity.Weather
+import domain.model.entity.weather.Weather
 import domain.repository.WeatherRepository
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import org.example.domain.model.entity.Location
-import org.example.domain.model.entity.WeatherCondition
+import org.example.domain.model.entity.weather.Location
+import org.example.domain.model.entity.weather.WeatherCondition
 import org.example.domain.usecase.GetWeatherUseCase
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

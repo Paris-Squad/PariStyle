@@ -1,8 +1,8 @@
 package domain.model.entity
 
-import org.example.domain.model.entity.ClothingType
-import org.example.domain.model.entity.TemperatureRange
-import org.example.domain.model.entity.WeatherCondition
+import org.example.domain.model.entity.cloth.enums.ClothingType
+import org.example.domain.model.entity.weather.TemperatureRange
+import org.example.domain.model.entity.weather.WeatherCondition
 
 data class ClothingItem(
     val clothingType: ClothingType,

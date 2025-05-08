@@ -1,6 +1,6 @@
-package domain.model.entity
+package domain.model.entity.weather
 
-import org.example.domain.model.entity.WeatherCondition
+import org.example.domain.model.entity.weather.WeatherCondition
 
 data class Weather(
     val temperature: Double,
